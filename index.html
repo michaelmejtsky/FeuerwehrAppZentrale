@@ -5,7 +5,7 @@
 <div id="install" class="ov"><div class="sheet"><h3 id="it"></h3><p id="ip"></p><div id="steps" class="steps"></div><button id="open" class="btn full">App jetzt öffnen</button><button class="btn secondary full" onclick="closeO('install')">Schließen</button></div></div>
 <script>
 const APPS=[{"id": "dienstbuch", "name": "Dienstbuch", "icon": "📋", "desc": "Dienstbuch und Dashboard.", "url": "https://michaelmejtsky.github.io/DashboardAPP/"}, {"id": "behoerdenpost", "name": "VB Behördenpost", "icon": "📄", "desc": "Behördenpost, Vorgänge und Dokumente.", "url": "https://michaelmejtsky.github.io/VBBehoerdenpost/"}, {"id": "ausbildung", "name": "Ausbildungsplaner", "icon": "📚", "desc": "Ausbildungsplanung und Übungsübersicht.", "url": "https://michaelmejtsky.github.io/Ausbildungsseite/"}, {"id": "infoscreen", "name": "Infoscreen-Steuerung", "icon": "🖥️", "desc": "Mobile Steuerung des Infoscreens.", "url": "https://michaelmejtsky.github.io/InfoscreenApp/"}, {"id": "einsatzfotos", "name": "Einsatzfotos", "icon": "📸", "desc": "Einsatzfotos mobil erfassen und übermitteln.", "url": "https://michaelmejtsky.github.io/Einsatzfotos/"}];
-const AUTH_API_URL='HIER_APPS_SCRIPT_EXEC_URL_EINTRAGEN';
+const AUTH_API_URL='https://script.google.com/macros/s/AKfycby6_ndOT0ZyCt1PYOSObTc2K5Hqtm4EjAkDt7tVYRM5tATO9wANr8ILEEQV1jL40NvB/exec';
 let sel=null;
 function esc(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 document.getElementById('grid').innerHTML=APPS.map(a=>`<article class="card"><div class="head"><div class="ico">${a.icon}</div><h2>${esc(a.name)}</h2></div><p>${esc(a.desc)}</p><button class="btn" onclick="ask('${a.id}')">Installieren / Öffnen</button></article>`).join('');
