@@ -1,19 +1,786 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#25346f"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="./manifest.json"><link rel="apple-touch-icon" href="./icon-192.png"><title>Feuerwehr App-Zentrale</title><style>
-:root{--b:#34499a;--d:#25346f;--bg:#f4f6fa;--mut:#718096;--bd:#e4e8f0}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;color:#1e2633}.top{background:linear-gradient(135deg,var(--d),var(--b));color:#fff;padding:calc(15px + env(safe-area-inset-top)) 18px 16px;position:sticky;top:0;z-index:5}.brand{max-width:850px;margin:auto;font-weight:900;font-size:21px}.brand small{display:block;font-size:10px;opacity:.75;letter-spacing:.09em}main{max-width:850px;margin:auto;padding:18px 15px 50px}.hero,.card{background:#fff;border:1px solid var(--bd);border-radius:20px;box-shadow:0 10px 35px rgba(38,54,111,.08)}.hero{padding:20px;margin-bottom:18px}.hero h1{margin:0 0 7px}.hero p,.card p{color:var(--mut);line-height:1.45}.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.card{padding:17px;display:flex;flex-direction:column}.head{display:flex;align-items:center;gap:12px}.ico{width:58px;height:58px;border-radius:15px;background:#eef1fb;display:grid;place-items:center;font-size:29px}.card h2{margin:0;font-size:18px}.card p{flex:1;font-size:14px}.btn{border:0;border-radius:13px;padding:13px;background:linear-gradient(135deg,var(--d),var(--b));color:#fff;font:inherit;font-weight:850;cursor:pointer}.note{margin-top:17px;background:#eef1fb;padding:15px;border-radius:16px;color:#4d5870;font-size:13px;line-height:1.5}.ov{position:fixed;inset:0;background:#101728a8;display:none;align-items:flex-end;justify-content:center;padding:14px;z-index:20}.ov.show{display:flex}.sheet{width:min(530px,100%);background:#fff;border-radius:23px;padding:21px;margin-bottom:env(safe-area-inset-bottom)}.sheet h3{margin:0 0 7px}.sheet p{color:var(--mut)}input{width:100%;padding:14px;border:1px solid var(--bd);border-radius:13px;font:inherit;font-size:17px}.full{width:100%;margin-top:10px}.secondary{background:#edf0f5;color:#1e2633}.err{color:#b42318;min-height:20px;margin-top:8px;font-size:13px;font-weight:700}.steps{background:#eef1fb;padding:13px;border-radius:14px;line-height:1.65}@media(max-width:650px){.grid{grid-template-columns:1fr}}
-</style></head><body><header class="top"><div class="brand"><small>FEUERWEHR ST. PÖLTEN-STADT</small>🚒 App-Zentrale</div></header><main><section class="hero"><h1>Feuerwehr Apps</h1><p>App auswählen, Zugangscode eingeben und am Smartphone, Tablet oder PC öffnen bzw. installieren.</p></section><div id="grid" class="grid"></div><div class="note"><b>iPhone/iPad:</b> Safari → Teilen → Zum Home-Bildschirm. <b>Android/Samsung:</b> Browser-Menü → App installieren bzw. Zum Startbildschirm hinzufügen. Unterstützte Desktop-Browser können PWAs ebenfalls installieren.</div></main>
-<div id="login" class="ov"><div class="sheet"><h3 id="lt">App freigeben</h3><p>Zugangscode eingeben.</p><input id="code" type="password" autocomplete="off"><div id="err" class="err"></div><button class="btn full" onclick="verify()">Weiter</button><button class="btn secondary full" onclick="closeO('login')">Abbrechen</button></div></div>
-<div id="install" class="ov"><div class="sheet"><h3 id="it"></h3><p id="ip"></p><div id="steps" class="steps"></div><button id="open" class="btn full">App jetzt öffnen</button><button class="btn secondary full" onclick="closeO('install')">Schließen</button></div></div>
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#25346f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+
+  <title>Feuerwehr App-Zentrale</title>
+
+  <style>
+    :root{
+      --b:#34499a;
+      --d:#25346f;
+      --bg:#f4f6fa;
+      --mut:#718096;
+      --bd:#e4e8f0;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      margin:0;
+      background:var(--bg);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+      color:#1e2633;
+    }
+
+    .top{
+      background:linear-gradient(135deg,var(--d),var(--b));
+      color:#fff;
+      padding:
+        calc(15px + env(safe-area-inset-top))
+        18px
+        16px;
+      position:sticky;
+      top:0;
+      z-index:5;
+    }
+
+    .brand{
+      max-width:850px;
+      margin:auto;
+      font-weight:900;
+      font-size:21px;
+    }
+
+    .brand small{
+      display:block;
+      font-size:10px;
+      opacity:.75;
+      letter-spacing:.09em;
+    }
+
+    main{
+      max-width:850px;
+      margin:auto;
+      padding:18px 15px 50px;
+    }
+
+    .hero,
+    .card{
+      background:#fff;
+      border:1px solid var(--bd);
+      border-radius:20px;
+      box-shadow:0 10px 35px rgba(38,54,111,.08);
+    }
+
+    .hero{
+      padding:20px;
+      margin-bottom:18px;
+    }
+
+    .hero h1{
+      margin:0 0 7px;
+    }
+
+    .hero p,
+    .card p{
+      color:var(--mut);
+      line-height:1.45;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:13px;
+    }
+
+    .card{
+      padding:17px;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .head{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .ico{
+      width:58px;
+      height:58px;
+      border-radius:15px;
+      background:#eef1fb;
+      display:grid;
+      place-items:center;
+      font-size:29px;
+    }
+
+    .card h2{
+      margin:0;
+      font-size:18px;
+    }
+
+    .card p{
+      flex:1;
+      font-size:14px;
+    }
+
+    .btn{
+      border:0;
+      border-radius:13px;
+      padding:13px;
+      background:linear-gradient(135deg,var(--d),var(--b));
+      color:#fff;
+      font:inherit;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    .btn:active{
+      transform:scale(.98);
+    }
+
+    .note{
+      margin-top:17px;
+      background:#eef1fb;
+      padding:15px;
+      border-radius:16px;
+      color:#4d5870;
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    /* LOGIN OVERLAY */
+
+    .ov{
+      position:fixed;
+      inset:0;
+      background:rgba(16,23,40,.68);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      padding:14px;
+      z-index:20;
+      backdrop-filter:blur(5px);
+    }
+
+    .ov.show{
+      display:flex;
+    }
+
+    .sheet{
+      width:min(530px,100%);
+      background:#fff;
+      border-radius:23px;
+      padding:21px;
+      margin-bottom:env(safe-area-inset-bottom);
+      box-shadow:0 20px 70px rgba(0,0,0,.25);
+    }
+
+    .sheet h3{
+      margin:0 0 7px;
+    }
+
+    .sheet p{
+      color:var(--mut);
+    }
+
+    input{
+      width:100%;
+      padding:14px;
+      border:1px solid var(--bd);
+      border-radius:13px;
+      font:inherit;
+      font-size:17px;
+      outline:none;
+    }
+
+    input:focus{
+      border-color:var(--b);
+      box-shadow:0 0 0 3px rgba(52,73,154,.12);
+    }
+
+    .full{
+      width:100%;
+      margin-top:10px;
+    }
+
+    .secondary{
+      background:#edf0f5;
+      color:#1e2633;
+    }
+
+    .err{
+      color:#b42318;
+      min-height:20px;
+      margin-top:8px;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .loading{
+      color:var(--b);
+    }
+
+    @media(max-width:650px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="top">
+  <div class="brand">
+    <small>FEUERWEHR ST. PÖLTEN-STADT</small>
+    🚒 App-Zentrale
+  </div>
+</header>
+
+
+<main>
+
+  <section class="hero">
+
+    <h1>Feuerwehr Apps</h1>
+
+    <p>
+      App auswählen, Zugangscode eingeben und anschließend
+      direkt öffnen bzw. installieren.
+    </p>
+
+  </section>
+
+
+  <div id="grid" class="grid"></div>
+
+
+  <div class="note">
+
+    <b>Installation:</b>
+    Nach erfolgreicher Code-Eingabe wird die gewünschte App
+    automatisch geöffnet.
+
+    <br><br>
+
+    <b>Android:</b>
+    Wenn möglich erscheint anschließend direkt die Möglichkeit,
+    die App zu installieren.
+
+    <br>
+
+    <b>iPhone / iPad:</b>
+    Safari → Teilen → Zum Home-Bildschirm.
+
+  </div>
+
+</main>
+
+
+
+<!-- LOGIN -->
+
+<div id="login" class="ov">
+
+  <div class="sheet">
+
+    <h3 id="lt">
+      App freigeben
+    </h3>
+
+    <p>
+      Zugangscode eingeben.
+    </p>
+
+    <input
+      id="code"
+      type="password"
+      inputmode="numeric"
+      autocomplete="off"
+      placeholder="Zugangscode"
+    >
+
+    <div id="err" class="err"></div>
+
+    <button
+      id="verifyBtn"
+      class="btn full"
+      onclick="verify()"
+    >
+      Weiter
+    </button>
+
+    <button
+      class="btn secondary full"
+      onclick="closeO('login')"
+    >
+      Abbrechen
+    </button>
+
+  </div>
+
+</div>
+
+
+
 <script>
-const APPS=[{"id": "dienstbuch", "name": "Dienstbuch", "icon": "📋", "desc": "Dienstbuch und Dashboard.", "url": "https://michaelmejtsky.github.io/DashboardAPP/"}, {"id": "behoerdenpost", "name": "VB Behördenpost", "icon": "📄", "desc": "Behördenpost, Vorgänge und Dokumente.", "url": "https://michaelmejtsky.github.io/VBBehoerdenpost/"}, {"id": "ausbildung", "name": "Ausbildungsplaner", "icon": "📚", "desc": "Ausbildungsplanung und Übungsübersicht.", "url": "https://michaelmejtsky.github.io/Ausbildungsseite/"}, {"id": "infoscreen", "name": "Infoscreen-Steuerung", "icon": "🖥️", "desc": "Mobile Steuerung des Infoscreens.", "url": "https://michaelmejtsky.github.io/InfoscreenApp/"}, {"id": "einsatzfotos", "name": "Einsatzfotos", "icon": "📸", "desc": "Einsatzfotos mobil erfassen und übermitteln.", "url": "https://michaelmejtsky.github.io/Einsatzfotos/"}];
-const AUTH_API_URL='https://script.google.com/macros/s/AKfycby6_ndOT0ZyCt1PYOSObTc2K5Hqtm4EjAkDt7tVYRM5tATO9wANr8ILEEQV1jL40NvB/exec';
-let sel=null;
-function esc(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-document.getElementById('grid').innerHTML=APPS.map(a=>`<article class="card"><div class="head"><div class="ico">${a.icon}</div><h2>${esc(a.name)}</h2></div><p>${esc(a.desc)}</p><button class="btn" onclick="ask('${a.id}')">Installieren / Öffnen</button></article>`).join('');
-function ask(id){sel=APPS.find(a=>a.id===id);document.getElementById('lt').textContent=sel.name+' freigeben';code.value='';err.textContent='';login.classList.add('show');setTimeout(()=>code.focus(),100)}
-code.onkeydown=e=>{if(e.key==='Enter')verify()};
-function verify(){let c=code.value.trim();if(!c){err.textContent='Bitte Zugangscode eingeben.';return}if(!AUTH_API_URL.startsWith('https://')){err.textContent='Code-Prüfung noch nicht verbunden.';return}err.textContent='Code wird geprüft …';jsonp(AUTH_API_URL,{action:'verify',app:sel.id,code:c}).then(r=>{if(!r||!r.ok){err.textContent='Zugangscode nicht korrekt.';return}closeO('login');showInstall()}).catch(()=>err.textContent='Code-Prüfung derzeit nicht erreichbar.')}
-function showInstall(){let ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),and=/Android/i.test(navigator.userAgent);it.textContent=sel.name+' installieren';if(ios){ip.textContent='App öffnen und danach auf den Home-Bildschirm legen.';steps.innerHTML='<b>iPhone / iPad</b><br>1. App öffnen<br>2. Safari: Teilen<br>3. Zum Home-Bildschirm<br>4. Hinzufügen'}else if(and){ip.textContent='App öffnen und anschließend über den Browser installieren.';steps.innerHTML='<b>Android / Samsung</b><br>1. App öffnen<br>2. Browser-Menü<br>3. App installieren oder Zum Startbildschirm hinzufügen'}else{ip.textContent='App im Browser öffnen.';steps.innerHTML='<b>PC / anderes Gerät</b><br>App öffnen und die Installationsfunktion des Browsers verwenden, sofern verfügbar.'}open.onclick=()=>location.href=sel.url;install.classList.add('show')}
-function closeO(id){document.getElementById(id).classList.remove('show')}
-function jsonp(url,p){return new Promise((res,rej)=>{let cb='fwcb_'+Date.now(),s=document.createElement('script');window[cb]=d=>{delete window[cb];s.remove();res(d)};p.callback=cb;s.src=url+'?'+new URLSearchParams(p);s.onerror=()=>{delete window[cb];s.remove();rej()};document.body.appendChild(s)})}
-if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-</script></body></html>
+
+/* ======================================================
+   APPS
+====================================================== */
+
+const APPS = [
+
+  {
+    id: "dienstbuch",
+    name: "Dienstbuch",
+    icon: "📋",
+    desc: "Dienstbuch und Dashboard.",
+    url: "https://michaelmejtsky.github.io/DashboardAPP/"
+  },
+
+  {
+    id: "behoerdenpost",
+    name: "VB Behördenpost",
+    icon: "📄",
+    desc: "Behördenpost, Vorgänge und Dokumente.",
+    url: "https://michaelmejtsky.github.io/VBBehoerdenpost/"
+  },
+
+  {
+    id: "ausbildung",
+    name: "Ausbildungsplaner",
+    icon: "📚",
+    desc: "Ausbildungsplanung und Übungsübersicht.",
+    url: "https://michaelmejtsky.github.io/Ausbildungsseite/"
+  },
+
+  {
+    id: "infoscreen",
+    name: "Infoscreen-Steuerung",
+    icon: "🖥️",
+    desc: "Mobile Steuerung des Infoscreens.",
+    url: "https://michaelmejtsky.github.io/InfoscreenApp/"
+  },
+
+  {
+    id: "einsatzfotos",
+    name: "Einsatzfotos",
+    icon: "📸",
+    desc: "Einsatzfotos mobil erfassen und übermitteln.",
+    url: "https://michaelmejtsky.github.io/Einsatzfotos/"
+  }
+
+];
+
+
+
+/* ======================================================
+   AUTH API
+====================================================== */
+
+const AUTH_API_URL =
+"https://script.google.com/macros/s/AKfycby6_ndOT0ZyCt1PYOSObTc2K5Hqtm4EjAkDt7tVYRM5tATO9wANr8ILEEQV1jL40NvB/exec";
+
+
+
+let sel = null;
+
+
+
+/* ======================================================
+   ELEMENTE
+====================================================== */
+
+const grid =
+document.getElementById("grid");
+
+const login =
+document.getElementById("login");
+
+const code =
+document.getElementById("code");
+
+const err =
+document.getElementById("err");
+
+const lt =
+document.getElementById("lt");
+
+const verifyBtn =
+document.getElementById("verifyBtn");
+
+
+
+/* ======================================================
+   ESCAPE
+====================================================== */
+
+function esc(v){
+
+  return String(v || "").replace(
+    /[&<>"']/g,
+    c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[c])
+  );
+
+}
+
+
+
+/* ======================================================
+   APP KARTEN ERSTELLEN
+====================================================== */
+
+grid.innerHTML =
+APPS.map(a => `
+
+  <article class="card">
+
+    <div class="head">
+
+      <div class="ico">
+        ${a.icon}
+      </div>
+
+      <h2>
+        ${esc(a.name)}
+      </h2>
+
+    </div>
+
+    <p>
+      ${esc(a.desc)}
+    </p>
+
+    <button
+      class="btn"
+      onclick="ask('${a.id}')"
+    >
+      Installieren / Öffnen
+    </button>
+
+  </article>
+
+`).join("");
+
+
+
+/* ======================================================
+   LOGIN ÖFFNEN
+====================================================== */
+
+function ask(id){
+
+  sel =
+    APPS.find(a => a.id === id);
+
+  if(!sel){
+    return;
+  }
+
+  lt.textContent =
+    sel.name + " freigeben";
+
+  code.value = "";
+
+  err.textContent = "";
+
+  verifyBtn.disabled = false;
+
+  verifyBtn.textContent = "Weiter";
+
+  login.classList.add("show");
+
+  setTimeout(() => {
+    code.focus();
+  }, 150);
+
+}
+
+
+
+/* ======================================================
+   ENTER = LOGIN
+====================================================== */
+
+code.addEventListener(
+  "keydown",
+  e => {
+
+    if(e.key === "Enter"){
+      verify();
+    }
+
+  }
+);
+
+
+
+/* ======================================================
+   CODE PRÜFEN
+====================================================== */
+
+async function verify(){
+
+  if(!sel){
+    return;
+  }
+
+  const c =
+    code.value.trim();
+
+  if(!c){
+
+    err.textContent =
+      "Bitte Zugangscode eingeben.";
+
+    return;
+
+  }
+
+
+  if(
+    !AUTH_API_URL.startsWith("https://")
+  ){
+
+    err.textContent =
+      "Code-Prüfung noch nicht verbunden.";
+
+    return;
+
+  }
+
+
+  err.textContent =
+    "Code wird geprüft …";
+
+  err.classList.add("loading");
+
+
+  verifyBtn.disabled = true;
+
+  verifyBtn.textContent =
+    "Prüfe …";
+
+
+  try{
+
+    const r =
+      await jsonp(
+        AUTH_API_URL,
+        {
+          action:"verify",
+          app:sel.id,
+          code:c
+        }
+      );
+
+
+    if(!r || !r.ok){
+
+      err.classList.remove("loading");
+
+      err.textContent =
+        "Zugangscode nicht korrekt.";
+
+      verifyBtn.disabled = false;
+
+      verifyBtn.textContent =
+        "Weiter";
+
+      return;
+
+    }
+
+
+    /*
+       CODE RICHTIG
+       ----------------------------
+
+       Direkt zur jeweiligen App.
+
+       ?install=1 sagt der Ziel-App:
+       Installationsmodus öffnen.
+    */
+
+
+    const target =
+      new URL(sel.url);
+
+
+    target.searchParams.set(
+      "install",
+      "1"
+    );
+
+
+    /*
+       Optionale Information,
+       aus welcher Zentrale gestartet wurde.
+    */
+
+    target.searchParams.set(
+      "source",
+      "appzentrale"
+    );
+
+
+    /*
+       DIREKTE WEITERLEITUNG
+    */
+
+    window.location.href =
+      target.toString();
+
+  }
+
+  catch(e){
+
+    console.error(e);
+
+    err.classList.remove("loading");
+
+    err.textContent =
+      "Code-Prüfung derzeit nicht erreichbar.";
+
+    verifyBtn.disabled = false;
+
+    verifyBtn.textContent =
+      "Weiter";
+
+  }
+
+}
+
+
+
+/* ======================================================
+   OVERLAY SCHLIESSEN
+====================================================== */
+
+function closeO(id){
+
+  document
+    .getElementById(id)
+    .classList
+    .remove("show");
+
+}
+
+
+
+/* ======================================================
+   JSONP
+====================================================== */
+
+function jsonp(url,p){
+
+  return new Promise(
+    (resolve,reject) => {
+
+      const cb =
+        "fwcb_" +
+        Date.now() +
+        "_" +
+        Math.floor(
+          Math.random()*100000
+        );
+
+
+      const s =
+        document.createElement(
+          "script"
+        );
+
+
+      window[cb] =
+        data => {
+
+          delete window[cb];
+
+          s.remove();
+
+          resolve(data);
+
+        };
+
+
+      p.callback =
+        cb;
+
+
+      s.src =
+        url +
+        "?" +
+        new URLSearchParams(p);
+
+
+      s.onerror =
+        () => {
+
+          delete window[cb];
+
+          s.remove();
+
+          reject(
+            new Error(
+              "JSONP Fehler"
+            )
+          );
+
+        };
+
+
+      document.body.appendChild(s);
+
+    }
+  );
+
+}
+
+
+
+/* ======================================================
+   SERVICE WORKER DER APP-ZENTRALE
+====================================================== */
+
+if(
+  "serviceWorker" in navigator
+){
+
+  window.addEventListener(
+    "load",
+    () => {
+
+      navigator
+        .serviceWorker
+        .register("./sw.js")
+        .catch(
+          e => console.log(
+            "SW:",
+            e
+          )
+        );
+
+    }
+  );
+
+}
+
+</script>
+
+</body>
+</html>
