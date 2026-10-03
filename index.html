@@ -377,6 +377,15 @@ const APPS = [
     icon: "📸",
     desc: "Einsatzfotos mobil erfassen und übermitteln.",
     url: "https://michaelmejtsky.github.io/Einsatzfotos/"
+  },
+
+  {
+    id: "messdienst",
+    name: "Messdienst",
+    icon: "🧪",
+    desc: "Prüfröhrchen, Stoffsuche, Anleitungen und Lagerbestand.",
+    url: "https://michaelmejtsky.github.io/Messdienst/",
+    ownLogin: true
   }
 
 ];
@@ -492,6 +501,16 @@ function ask(id){
     return;
   }
 
+  /*
+     Apps mit eigenem Login – wie der Messdienst –
+     werden direkt geöffnet. Dadurch gibt es keinen
+     doppelten Zugangscode.
+  */
+  if(sel.ownLogin){
+    openSelectedApp();
+    return;
+  }
+
   lt.textContent =
     sel.name + " freigeben";
 
@@ -508,6 +527,31 @@ function ask(id){
   setTimeout(() => {
     code.focus();
   }, 150);
+
+}
+
+
+function openSelectedApp(){
+
+  if(!sel){
+    return;
+  }
+
+  const target =
+    new URL(sel.url);
+
+  target.searchParams.set(
+    "install",
+    "1"
+  );
+
+  target.searchParams.set(
+    "source",
+    "appzentrale"
+  );
+
+  window.location.href =
+    target.toString();
 
 }
 
@@ -618,33 +662,7 @@ async function verify(){
     */
 
 
-    const target =
-      new URL(sel.url);
-
-
-    target.searchParams.set(
-      "install",
-      "1"
-    );
-
-
-    /*
-       Optionale Information,
-       aus welcher Zentrale gestartet wurde.
-    */
-
-    target.searchParams.set(
-      "source",
-      "appzentrale"
-    );
-
-
-    /*
-       DIREKTE WEITERLEITUNG
-    */
-
-    window.location.href =
-      target.toString();
+    openSelectedApp();
 
   }
 
